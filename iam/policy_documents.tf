@@ -209,9 +209,11 @@ resource "aws_iam_policy" "r_codeBuild_policy" {
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:s3:::codepipeline-ap-southeast-1-*"
+                "arn:aws:s3:::c-ops-poc-dev-codepipeline-s3*"
+                # "*"
             ],
             "Action": [
+                # "s3:*"
                 "s3:PutObject",
                 "s3:GetObject",
                 "s3:GetObjectVersion",

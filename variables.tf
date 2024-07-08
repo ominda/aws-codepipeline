@@ -6,3 +6,7 @@ variable "v_aws_region" {
 variable "v_default_tags" {
     type = map(string)  
 }
+
+variable "v_primary_cidr_block" {
+  type = string  
+}
