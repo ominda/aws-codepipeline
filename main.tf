@@ -7,4 +7,6 @@ module "m_pipeline" {
     default_tags = var.v_default_tags
     code_build_role = module.m_iam.o_codeBuild_role_arn
     code_pipeline_role = module.m_iam.o_codePipeline_role_arn
+    event_bridge_role = module.m_iam.o_eventBridge_role_arn
+    lambda_role = module.m_iam.o_lambda_role_arn
 }

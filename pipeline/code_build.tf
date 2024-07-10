@@ -5,7 +5,11 @@ resource "aws_codebuild_project" "r_codeBuild_project" {
   service_role  = var.code_build_role
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    # type = "NO_ARTIFACTS"
+    type = "S3"
+    location = aws_s3_bucket.r_codePipeline_s3.bucket
+    path = "codebuild"
+    packaging = "ZIP"
   }
 
   # cache {
@@ -19,10 +23,10 @@ resource "aws_codebuild_project" "r_codeBuild_project" {
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
 
-    # environment_variable {
-    #   name  = "SOME_KEY1"
-    #   value = "SOME_VALUE1"
-    # }
+    environment_variable {
+      name  = "LAMBDA_FUNCTION_NAME"
+      value = "${local.lambda_function_name}"
+    }
 
     # environment_variable {
     #   name  = "SOME_KEY2"
@@ -32,10 +36,10 @@ resource "aws_codebuild_project" "r_codeBuild_project" {
   }
 
   logs_config {
-    # cloudwatch_logs {
-    #   group_name  = "log-group"
-    #   stream_name = "log-stream"
-    # }
+    cloudwatch_logs {
+      group_name  = "${local.code_build_log_group}"
+      stream_name = "${local.code_build_log_stream}"
+    }
 
     s3_logs {
       status   = "ENABLED"
@@ -56,29 +60,5 @@ resource "aws_codebuild_project" "r_codeBuild_project" {
         commands:
           - echo "Hello World"
 EOF
-
-    # git_submodules_config {
-    #   fetch_submodules = true
-    # }
   }
-
-#   source_version = "master"
-
-#   vpc_config {
-#     vpc_id = aws_vpc.example.id
-
-#     subnets = [
-#       aws_subnet.example1.id,
-#       aws_subnet.example2.id,
-#     ]
-
-#     security_group_ids = [
-#       aws_security_group.example1.id,
-#       aws_security_group.example2.id,
-#     ]
-#   }
-
-#   tags = {
-#     Environment = "Test"
-#   }
 }

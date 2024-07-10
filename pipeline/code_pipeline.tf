@@ -51,24 +51,26 @@ resource "aws_codepipeline" "r_codePipeline" {
     }
   }
 
-#   stage {
-#     name = "Deploy"
+  stage {
+    name = "Deploy"
 
-#     action {
-#       name            = "Deploy"
-#       category        = "Deploy"
-#       owner           = "AWS"
-#       provider        = "CloudFormation"
-#       input_artifacts = ["build_output"]
-#       version         = "1"
+    action {
+      name            = "Deploy"
+      category        = "Invoke"
+      owner           = "AWS"
+      provider        = "Lambda"
+      input_artifacts = ["build_output"]
+      version         = "1"
 
-#       configuration = {
-#         ActionMode     = "REPLACE_ON_FAILURE"
-#         Capabilities   = "CAPABILITY_AUTO_EXPAND,CAPABILITY_IAM"
-#         OutputFileName = "CreateStackOutput.json"
-#         StackName      = "MyStack"
-#         TemplatePath   = "build_output::sam-templated.yaml"
-#       }
-#     }
-#   }
+      configuration = {
+        FunctionName = aws_lambda_function.r_lambda_function.function_name
+        UserParameters = <<EOF
+        {
+          "S3Bucket": "${aws_s3_bucket.r_codePipeline_s3.bucket}",
+          "S3Key": "codebuild/${aws_codebuild_project.r_codeBuild_project.name}.zip"
+        }
+EOF
+      }
+    }
+  }
 }
